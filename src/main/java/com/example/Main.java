@@ -24,10 +24,13 @@ public class Main {
         getCategories(strConn, userName, password);
 
         System.out.println();
-        insertCategory(strConn, userName, password);
+        // insertCategory(strConn, userName, password);
 
         System.out.println();
         getCategories(strConn, userName, password);
+
+        System.out.println();
+        deleteCategory(strConn, userName, password);
     }
 
     private static void getCategories(String strConn, String userName, String password) {
@@ -78,6 +81,30 @@ public class Main {
             System.out.println("Category inserted successfully.");
         } catch (Exception ex) {
             System.out.println("Category creation error: " + ex.getMessage());
+        }
+
+        input.close();
+    }
+
+    private static void deleteCategory(String strConn, String userName, String password) {
+        Scanner input = new Scanner(System.in);
+        System.out.printf("Enter category id to delete: ");
+        String categoryId = input.nextLine();
+
+        try (Connection conn = DriverManager.getConnection(strConn, userName, password)) {
+            String deleteQuery = "DELETE FROM categories WHERE id=?";
+            // Create a PreparedStatement
+            PreparedStatement preparedStatement = conn.prepareStatement(deleteQuery);
+            // Set values for the placeholders
+            preparedStatement.setString(1, categoryId);
+            // Execute the SQL query
+            int rowsAffected = preparedStatement.executeUpdate();
+            // Close the resources
+            preparedStatement.close();
+            System.out.println("Rows affected: " + rowsAffected);
+            System.out.printf("Id: %s Category deleted successfully.", categoryId);
+        } catch (Exception ex) {
+            System.out.println("Category deletion error: " + ex.getMessage());
         }
 
         input.close();

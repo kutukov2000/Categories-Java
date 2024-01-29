@@ -24,13 +24,22 @@ public class Main {
         getCategories(strConn, userName, password);
 
         System.out.println();
-        // insertCategory(strConn, userName, password);
+        insertCategory(strConn, userName, password);
 
         System.out.println();
         getCategories(strConn, userName, password);
 
         System.out.println();
         deleteCategory(strConn, userName, password);
+
+        System.out.println();
+        getCategories(strConn, userName, password);
+        
+        System.out.println();
+        editCategory(strConn, userName, password);
+
+        System.out.println();
+        getCategories(strConn, userName, password);
     }
 
     private static void getCategories(String strConn, String userName, String password) {
@@ -81,6 +90,40 @@ public class Main {
             System.out.println("Category inserted successfully.");
         } catch (Exception ex) {
             System.out.println("Category creation error: " + ex.getMessage());
+        }
+
+        input.close();
+    }
+
+    private static void editCategory(String strConn, String userName, String password){
+        Scanner input = new Scanner(System.in);
+
+        Category categoryCreate = new Category();
+        System.out.printf("Enter category id: ");
+        categoryCreate.setId(input.nextLine());
+        System.out.printf("Enter new category name: ");
+        categoryCreate.setName(input.nextLine());
+        System.out.printf("Enter new category description: ");
+        categoryCreate.setDescription(input.nextLine());
+
+        try (Connection conn = DriverManager.getConnection(strConn, userName, password)) {
+            String updateQuery = "UPDATE categories " +
+                                 "SET name = ?, description = ? " +
+                                 "WHERE id=?;";
+            // Create a PreparedStatement
+            PreparedStatement preparedStatement = conn.prepareStatement(updateQuery);
+            // Set values for the placeholders
+            preparedStatement.setString(1, categoryCreate.getName());
+            preparedStatement.setString(2, categoryCreate.getDescription());
+            preparedStatement.setString(3, categoryCreate.getId());
+            // Execute the SQL query
+            int rowsAffected = preparedStatement.executeUpdate();
+            // Close the resources
+            preparedStatement.close();
+            System.out.println("Rows affected: " + rowsAffected);
+            System.out.println("Category updated successfully.");
+        } catch (Exception ex) {
+            System.out.println("Category updation error: " + ex.getMessage());
         }
 
         input.close();

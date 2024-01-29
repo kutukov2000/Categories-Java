@@ -17,29 +17,43 @@ public class Main {
         String database = "javaDb";
         String strConn = "jdbc:mariadb://" + host + ":" + port + "/" + database;
 
-        System.out.println();
         createCategoriesTable(strConn, userName, password);
 
-        System.out.println();
-        getCategories(strConn, userName, password);
+        Menu(strConn, userName, password);
+    }
 
-        System.out.println();
-        insertCategory(strConn, userName, password);
+    private static void Menu(String strConn, String userName, String password) {
+        Scanner input = new Scanner(System.in);
 
-        System.out.println();
-        getCategories(strConn, userName, password);
+        while (true) {
+            System.out.println("\n---Menu---");
+            System.out.println("[1] - CategoryList");
+            System.out.println("[2] - Add category");
+            System.out.println("[3] - Edit category");
+            System.out.println("[4] - Delete category");
+            System.out.println("[5] - Exit");
+            System.out.println();
 
-        System.out.println();
-        deleteCategory(strConn, userName, password);
-
-        System.out.println();
-        getCategories(strConn, userName, password);
-        
-        System.out.println();
-        editCategory(strConn, userName, password);
-
-        System.out.println();
-        getCategories(strConn, userName, password);
+            int choice = input.nextInt();
+            switch (choice) {
+                case 1:
+                    getCategories(strConn, userName, password);
+                    break;
+                case 2:
+                    insertCategory(strConn, userName, password);
+                    break;
+                case 3:
+                    editCategory(strConn, userName, password);
+                    break;
+                case 4:
+                    deleteCategory(strConn, userName, password);
+                    break;
+                case 5:
+                    return;
+                default:
+                    break;
+            }
+        }
     }
 
     private static void getCategories(String strConn, String userName, String password) {
@@ -91,11 +105,9 @@ public class Main {
         } catch (Exception ex) {
             System.out.println("Category creation error: " + ex.getMessage());
         }
-
-        input.close();
     }
 
-    private static void editCategory(String strConn, String userName, String password){
+    private static void editCategory(String strConn, String userName, String password) {
         Scanner input = new Scanner(System.in);
 
         Category categoryCreate = new Category();
@@ -108,8 +120,8 @@ public class Main {
 
         try (Connection conn = DriverManager.getConnection(strConn, userName, password)) {
             String updateQuery = "UPDATE categories " +
-                                 "SET name = ?, description = ? " +
-                                 "WHERE id=?;";
+                    "SET name = ?, description = ? " +
+                    "WHERE id=?;";
             // Create a PreparedStatement
             PreparedStatement preparedStatement = conn.prepareStatement(updateQuery);
             // Set values for the placeholders
@@ -125,8 +137,6 @@ public class Main {
         } catch (Exception ex) {
             System.out.println("Category updation error: " + ex.getMessage());
         }
-
-        input.close();
     }
 
     private static void deleteCategory(String strConn, String userName, String password) {
@@ -149,8 +159,6 @@ public class Main {
         } catch (Exception ex) {
             System.out.println("Category deletion error: " + ex.getMessage());
         }
-
-        input.close();
     }
 
     private static void createCategoriesTable(String strConn, String userName, String password) {

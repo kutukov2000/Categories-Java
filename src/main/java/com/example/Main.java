@@ -3,6 +3,7 @@ package com.example;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.Scanner;
 
@@ -16,8 +17,41 @@ public class Main {
         String database = "javaDb";
         String strConn = "jdbc:mariadb://" + host + ":" + port + "/" + database;
 
+        System.out.println();
         createCategoriesTable(strConn, userName, password);
+
+        System.out.println();
+        getCategories(strConn, userName, password);
+
+        System.out.println();
         insertCategory(strConn, userName, password);
+
+        System.out.println();
+        getCategories(strConn, userName, password);
+    }
+
+    private static void getCategories(String strConn, String userName, String password) {
+        try (Connection conn = DriverManager.getConnection(strConn, userName, password)) {
+            Statement statement = conn.createStatement();
+            String sql = "SELECT * FROM categories";
+
+            // Print table header
+            System.out.printf("%-5s %-15s %-20s\n", "ID", "Name", "Description");
+
+            ResultSet result = statement.executeQuery(sql);
+            while (result.next()) {
+                int id = result.getInt("id");
+                String name = result.getString("name");
+                String description = result.getString("description");
+                // Print table row with data
+                System.out.printf("%-5d %-15s %-20s\n", id, name, description);
+            }
+
+            statement.close();
+            System.out.println("Table 'categories' SELECTED!");
+        } catch (Exception ex) {
+            System.out.println("Connection error: " + ex.getMessage());
+        }
     }
 
     private static void insertCategory(String strConn, String userName, String password) {
